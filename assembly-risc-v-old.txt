@@ -1,0 +1,936 @@
+1################################
+
+typedef long long int INT64;
+typedef unsigned long long int UINT64;
+
+void SumV(INT64 *u, INT64 *z, INT64 *v, UINT64 size ){
+    for (UINT64 i=0; i < size; i++) {
+        z[i] = u[i]*v[i] - u[size-i]*v[size-i];
+        if (z[i] < 0) {
+            z[i] = z[i]*z[i]*2;
+        }
+        else {
+            z[i] = -1*z[i]*z[i]*2;
+        }
+    }
+}
+
+SumV(long long*, long long*, long long*, unsigned long long):
+        beq     a3,zero,.L1
+        slli    a3,a3,3
+        X1
+        j       .L5
+.L3:
+        mul     a5,a6,a5
+        add     a3,a1,a4
+        addi    a7,a7,-8
+        X2
+        sd      a5,0(a3)
+        beq     a0,a7,.L1
+.L5:
+        add     a5,a2,a4
+        add     a6,a0,a4
+        ld      a6,0(a6)
+        ld      a3,0(t1)
+        ld      t3,0(a7)
+        ld      a5,0(a5)
+        mul     a3,a3,t3
+        mul     a5,a5,a6
+        sub     a6,a3,a5
+        sub     a5,a5,a3
+        X3
+        addi    a4,a4,8
+        slli    a5,a5,1
+        sd      a5,0(a3)
+        bne     a0,a7,.L5
+.L1:
+        ret
+
+
+
+
+        X1
+        add     a7,a0,a3
+        add     t1,a2,a3
+        li      a4,0
+        X2
+        addi    t1,t1,-8
+        addi    a4,a4,8
+        slli    a5,a5,1
+        X3
+        bge     a5,zero,.L3
+        mul     a5,a5,a5
+        add     a3,a1,a4
+        addi    a7,a7,-8
+        addi    t1,t1,-8
+
+2################################
+
+void f(int * u, int * v, int * z, unsigned int size) {
+  for (int i = 0; i < size; i++) {
+    if (*v > *u) {
+      *(z++) = *(v++) - *(u++);
+      }
+    }
+  }
+
+f(int*, int*, int*, unsigned int):
+        beq     a3,zero,.L1
+        sext.w  a3,a3
+        li      a5,0
+.L4:
+        lw      a6,0(a1)
+        X1
+        subw    a7,a6,a4
+        X2
+        sw      a7,0(a2)
+        addi    a1,a1,4
+        X3
+        addi    a2,a2,4
+.L3:
+        bne     a5,a3,.L4
+.L1:
+        ret
+
+
+
+
+        X1
+        lw      a4,0(a0)
+        addiw   a5,a5,1
+        X2
+        ble     a6,a4,.L3
+        X3
+        addi    a0,a0,4
+
+3################################
+
+void sposta(int v[], short int i) {
+  short int j;
+  int appoggio;
+  appoggio = v[i];
+  j = i - 1;
+  while ((j >= 0) && (v[j] > appoggio)){
+    v[j+1] = v[j];
+    j = j-1;
+  }
+  v[j+1] = appoggio;
+}
+
+void ordina(int v[], short int n){
+  short int i;
+  i = 1;
+  while (i < n) {
+    sposta(v, i);
+    i = i+1;
+  }
+}
+
+sposta(int*, short):
+        addiw   a4,a1,-1
+        slli    a2,a4,48
+        slli    a1,a1,2
+        srli    a2,a2,48
+        slliw   a4,a4,16
+        add     a1,a0,a1
+        slli    a5,a2,2
+        sraiw   a4,a4,16
+        lw      a6,0(a1)
+        add     a5,a0,a5
+        li      a7,-1
+        bge     a4,zero,.L4
+        j       .L9
+.L5:
+        sw      a3,4(a5)
+        addi    a5,a5,-4
+        beq     a4,a7,.L10
+        mv      a2,a1
+.L4:
+        lw      a3,0(a5)
+        addi    a1,a2,-1
+        slliw   a4,a1,16
+        sraiw   a4,a4,16
+        bgt     a3,a6,.L5
+.L3:
+        addi    a2,a2,1
+        slli    a2,a2,2
+        add     a0,a0,a2
+        sw      a6,0(a0)
+        ret
+.L10:
+        addiw   a2,a2,-1
+        slliw   a2,a2,16
+        sraiw   a2,a2,16
+        addi    a2,a2,1
+        slli    a2,a2,2
+        add     a0,a0,a2
+        sw      a6,0(a0)
+        ret
+.L9:
+        mv      a2,a4
+        j       .L3
+ordina(int*, short):
+        li      a5,1
+        ble     a1,a5,.L16
+        addi    sp,sp,-32
+        sd      s0,16(sp)
+        sd      s1,8(sp)
+        sd      s2,0(sp)
+        sd      ra,24(sp)
+        mv      s1,a1
+        mv      s2,a0
+        li      s0,1
+.L13:
+        mv      a1,s0
+        addiw   s0,s0,1
+        slliw   s0,s0,16
+        mv      a0,s2
+        sraiw   s0,s0,16
+        call    sposta(int*, short)
+        bne     s1,s0,.L13
+        ld      ra,24(sp)
+        ld      s0,16(sp)
+        ld      s1,8(sp)
+        ld      s2,0(sp)
+        addi    sp,sp,32
+        jr      ra
+.L16:
+        ret
+
+
+
+
+        X1
+
+        X2
+
+        X3
+
+
+4##############################
+
+void copia_stringa(char d[], const char s[]) {
+  signed char i = 0;
+  while ((d[i] = s[i]) != 0) {
+    i += 1;
+  }
+}
+
+copia_stringa(char*, char const*):
+        lbu     a5,0(a1)
+        X1
+        beq     a5,zero,.L1
+        li      a5,0
+.L3:
+        X2
+        add     a4,a1,a5
+        lbu     a4,0(a4)
+        X3
+        bne     a4,zero,.L3
+.L1:
+        ret
+
+
+
+        X1
+        sb      a5,0(a0)
+        X2
+        addiw   a5,a5,1
+        slliw   a5,a5,24
+        sraiw   a5,a5,24
+        X3
+        add     a3,a0,a5
+        sb      a4,0(a3)
+5##############################
+
+bool is_prime(int n)
+{
+  for (int i = 2; i <= n / 2; i++)
+  {
+    if ((n % i) == 0)
+      return false;
+  }
+  return n > 1;
+}
+
+is_prime(int):
+        srliw   a3,a0,31
+        addw    a3,a3,a0
+
+        andi    a5,a0,1
+        beq     a5,zero,.L7
+        li      a4,2
+        j       .L4
+.L5:
+        X2
+.L4:
+        addiw   a4,a4,1
+        mv      a5,a4
+        ble     a4,a3,.L5
+.L2:
+        li      a5,1
+        X3
+        ret
+.L7:
+        li      a0,0
+        ret
+
+
+
+        X1
+        li      a5,3
+        sraiw   a3,a3,1
+        ble     a0,a5,.L2
+        X2
+        remw    a5,a0,a5
+        beq     a5,zero,.L7
+        X3
+        sgt     a0,a0,a5
+
+6##############################
+
+bool is_prime_rec(int n, int i = 2)
+{
+  if (i > n / 2)
+    return n > 1;
+  else if (n % i == 0)
+    return false;
+  else
+    return is_prime_rec(n, i + 1);
+}
+
+is_prime_rec(int, int):
+        srliw   a4,a0,31
+        addw    a4,a4,a0
+        X1
+        remw    a5,a0,a1
+        bne     a5,zero,.L4
+        j       .L7
+.L8:
+        remw    a5,a0,a5
+        X2
+.L4:
+        addiw   a1,a1,1
+        mv      a5,a1
+        ble     a1,a4,.L8
+.L2:
+        li      a5,1
+        X3
+        ret
+.L7:
+        li      a0,0
+        ret
+
+
+
+        X1
+        sraiw   a4,a4,1
+        bgt     a1,a4,.L2
+        X2
+        beq     a5,zero,.L7
+        X3
+        sgt     a0,a0,a5
+
+7##############################
+
+void lambda_swap(unsigned int &a, unsigned int &b)
+{
+  // Swap 8 lsb of two numbers
+  unsigned int a_ = a, b_ = b;
+  unsigned int a_res, b_res;
+  const unsigned int shift = (sizeof(int) - 1) * 8;
+
+  a_ = (a_ >> 8) << 8;         // lsb set to 0
+  b_ = (b_ << shift) >> shift; // all bytes but the lsb set to 0
+
+  a_res = a_ | b_;
+
+  a_ = a;
+  b_ = b;
+
+  a_ = (a_ << shift) >> shift; // all bytes but the lsb set to 0
+  b_ = (b_ >> 8) << 8;         // lsb set to 0
+
+  b_res = a_ | b_;
+
+  a = a_res;
+  b = b_res;
+}
+
+lambda_swap(unsigned int&, unsigned int&):
+        lw      a5,0(a0)
+        lw      a4,0(a1)
+        X1
+        or      a3,a3,a2
+        X2
+        andi    a4,a4,-256
+        sw      a3,0(a0)
+        X3
+        sw      a5,0(a1)
+        ret
+
+
+
+        X1
+        andi    a3,a5,-256
+        andi    a2,a4,255
+        X2
+        andi    a5,a5,255
+        X3
+        or      a5,a5,a4
+
+8##############################
+
+int division(int a, int b, int &remainder)
+{ // a>=0, b>0
+  int quotient = 0;
+  while (a >= b)
+  {
+    a -= b;
+    quotient++;
+  }
+  remainder = a;
+  return quotient;
+}
+
+division(int, int, int&):
+        mv      a5,a0
+        X1
+        blt     a5,a1,.L2
+.L3:
+        subw    a5,a5,a1
+        X2
+        ble     a1,a5,.L3
+.L2:
+        X3
+        ret
+
+
+
+        X1
+        li      a0,0
+        X2
+        addiw   a0,a0,1
+        X3
+        sw      a5,0(a2)
+
+9#############################
+
+int gcd(int a, int b)
+{ // Euclidean Algorithm
+  // a > b
+  if (b == 0)
+    return a;
+  else
+    return gcd(b, a % b);
+}
+
+gcd(int, int):
+        X1
+        j       .L10
+.L11:
+        mv      a1,a5
+.L2:
+        remw    a5,a0,a1
+        X2
+        mv      a0,a1
+        ret
+.L10:
+        mv      a1,a0
+        X3
+        ret
+
+
+
+        X1
+        bne     a1,zero,.L2
+        X2
+        mv      a0,a1
+        bne     a5,zero,.L11
+        X3
+        mv      a0,a1
+
+10#############################
+
+int fib(int n){// n >= 0
+  if(n == 0 || n == 1)
+    return 1;
+  else
+    return fib(n-1)+fib(n-2);
+}
+
+fib(int):
+        li      a5,1
+        bleu    a0,a5,.L3
+        addi    sp,sp,-32
+        sd      ra,24(sp)
+        sd      s0,16(sp)
+        sd      s1,8(sp)
+        mv      s1,a0
+        X1
+        mv      s0,a0
+        addiw   a0,s1,-2
+        call    fib(int)
+        X2
+        ld      s0,16(sp)
+        ld      s1,8(sp)
+        addi    sp,sp,32
+        X3
+.L3:
+        li      a0,1
+        ret
+
+
+
+        X1
+        addiw   a0,a0,-1
+        call    fib(int)
+        X2
+        addw    a0,s0,a0
+        ld      ra,24(sp)
+        X3
+        jr      ra
+
+11#############################
+
+int fact(int n){// n >= 0
+  if(n == 0 || n == 1)
+    return 1;
+  else
+    return n*fact(n-1);
+}
+
+fact(int):
+        li      a5,1
+        X1
+        sd      ra,8(sp)
+        sd      s0,0(sp)
+        mv      s0,a0
+        X2
+        mulw    a0,s0,a0
+        ld      ra,8(sp)
+        X3
+        jr      ra
+.L3:
+        li      a0,1
+        ret
+
+
+
+        X1
+        bleu    a0,a5,.L3
+        addi    sp,sp,-16
+        X2
+        addiw   a0,a0,-1
+        call    fact(int)
+        X3
+        ld      s0,0(sp)
+        addi    sp,sp,16
+
+12#############################
+
+int strlen (char *s){
+  int n = 0;
+  while (s[n] != '\0')
+    n++;
+  return n;
+}
+
+bool streq(char *s1, char *s2)
+{
+  bool res;
+  int n1 = strlen(s1);
+  int n2 = strlen(s2);
+
+  if (n1 != n2)
+    res = false;
+  else
+  {
+    res = true;
+    for (int i = 0; i < n1 && res; i++)
+      res = s1[i] == s2[i];
+  }
+
+  return res;
+}
+
+strlen(char*):
+        lbu     a5,0(a0)
+        beq     a5,zero,.L3
+        addi    sp,sp,-16
+        addi    a0,a0,1
+        sd      ra,8(sp)
+        call    strlen
+        ld      ra,8(sp)
+        addiw   a0,a0,1
+        addi    sp,sp,16
+        jr      ra
+.L3:
+        li      a0,0
+        ret
+streq(char*, char*):
+        addi    sp,sp,-48
+        sd      s1,24(sp)
+        sd      ra,40(sp)
+        sd      s0,32(sp)
+        sd      s2,16(sp)
+        sd      s3,8(sp)
+        sd      s4,0(sp)
+        lbu     a5,0(a0)
+        lbu     s4,0(a1)
+        mv      s1,a1
+        beq     a5,zero,.L10
+        mv      s0,a0
+        addi    a0,a0,1
+        call    strlen
+        mv      s2,a0
+        sext.w  s3,a0
+        beq     s4,zero,.L20
+        addi    a0,s1,1
+        call    strlen
+        sext.w  a5,a0
+        li      a0,0
+        beq     s3,a5,.L21
+.L12:
+        ld      ra,40(sp)
+        ld      s0,32(sp)
+        ld      s1,24(sp)
+        ld      s2,16(sp)
+        ld      s3,8(sp)
+        ld      s4,0(sp)
+        addi    sp,sp,48
+        jr      ra
+.L21:
+        addiw   s3,s3,1
+        ble     s3,zero,.L17
+        slli    a2,s2,32
+        srli    a2,a2,32
+        mv      a5,s0
+        mv      a4,s1
+        add     a2,s0,a2
+        j       .L14
+.L13:
+        addi    a5,a5,1
+        addi    a4,a4,1
+        bne     a3,a1,.L20
+.L14:
+        lbu     a3,0(a5)
+        lbu     a1,0(a4)
+        bne     a2,a5,.L13
+        ld      ra,40(sp)
+        ld      s0,32(sp)
+        sub     a3,a3,a1
+        ld      s1,24(sp)
+        ld      s2,16(sp)
+        ld      s3,8(sp)
+        ld      s4,0(sp)
+        seqz    a0,a3
+        addi    sp,sp,48
+        jr      ra
+.L20:
+        ld      ra,40(sp)
+        ld      s0,32(sp)
+        ld      s1,24(sp)
+        ld      s2,16(sp)
+        ld      s3,8(sp)
+        ld      s4,0(sp)
+        li      a0,0
+        addi    sp,sp,48
+        jr      ra
+.L10:
+        beq     s4,zero,.L17
+        addi    a0,a1,1
+        call    strlen
+        sext.w  a0,a0
+        addi    a0,a0,1
+        seqz    a0,a0
+        j       .L12
+.L17:
+        li      a0,1
+        j       .L12
+
+
+
+        X1
+
+        X2
+
+        X3
+
+
+13############################
+
+bool is_alnum(char c)
+{
+  return ('a' <= c && c <= 'z') ||
+         ('A' <= c && c <= 'Z') ||
+         ('0' <= c && c <= '9');
+}
+
+is_alnum(char):
+        andi    a5,a0,-33
+        X1
+        li      a4,25
+        bleu    a5,a4,.L3
+        X2
+        andi    a0,a0,0xff
+        X3
+        ret
+.L3:
+        li      a0,1
+        ret
+
+
+
+        X1
+        addiw   a5,a5,-65
+        andi    a5,a5,0xff
+        X2
+        addiw   a0,a0,-48
+        X3
+        sltiu   a0,a0,10
+
+14############################
+
+void shift(char *s)
+{
+  int i = 0;
+  while (s[i] != '\0')
+  {
+    s[i] = s[i + 1];
+    i++;
+  }
+}
+
+void strip(char *s)
+{
+  int i = 0;
+  while (s[i] != '\0')
+  {
+    // Condition
+    if (s[i] == 'p')
+    {
+      shift(&s[i]);
+    }
+    else
+      i++;
+  }
+}
+
+shift(char*):
+        lbu     a5,0(a0)
+        beq     a5,zero,.L1
+.L3:
+        lbu     a5,1(a0)
+        addi    a0,a0,1
+        sb      a5,-1(a0)
+        bne     a5,zero,.L3
+.L1:
+        ret
+strip(char*):
+        lbu     a4,0(a0)
+        beq     a4,zero,.L9
+        X1
+        li      a2,112
+.L15:
+        beq     a4,a2,.L24
+        addiw   a3,a3,1
+.L14:
+        X2
+        bne     a4,zero,.L15
+.L9:
+        ret
+.L24:
+        lbu     a4,0(a5)
+        beq     a4,zero,.L14
+.L13:
+        lbu     a4,1(a5)
+        X3
+        bne     a4,zero,.L13
+        j       .L14
+
+
+
+        X1
+        mv      a5,a0
+        li      a3,0
+        X2
+        add     a5,a0,a3
+        lbu     a4,0(a5)
+        X3
+        addi    a5,a5,1
+        sb      a4,-1(a5)
+
+15###########################
+
+void merge_sarr(int *a, int *b, int &na, int nb){
+  // In-Place merge, assuming size(a) >= na+nb
+  int pos=0;
+  for(int j=0; j < nb; j++){
+    bool to_place=false;
+    while(!to_place){
+      if(pos == na-1){
+        pos = a[pos] > b[j] ? pos : pos+1;
+        to_place = true;
+      }
+      else if(a[pos+1] >= b[j]){
+        to_place = true;
+      }
+      else
+        pos++;
+    }
+    for(int k=0; k < (na-pos); k++)
+      a[na-k] = a[na-k-1];
+    a[pos] = b[j];
+    na++;
+  }
+}
+
+
+
+        X1
+
+        X2
+
+        X3
+
+
+16###########################
+
+void crypt(char word[], int key)
+{
+  int i = 0;
+  while (word[i] != '\0')
+  {
+    word[i] = (((word[i] - 'a') + key) % ('z' - 'a')) + 'a';
+    i++;
+  }
+}
+
+crypt(char*, int):
+        lbu     a5,0(a0)
+        X1
+        li      a4,25
+.L3:
+        addiw   a5,a5,-97
+        X2
+        addi    a0,a0,1
+        addiw   a5,a5,97
+        sb      a5,-1(a0)
+        X3
+        bne     a5,zero,.L3
+.L1:
+        ret
+
+
+
+        X1
+        beq     a5,zero,.L1
+        X2
+        addw    a5,a5,a1
+        remw    a5,a5,a4
+        X3
+        lbu     a5,0(a0)
+
+17###########################
+
+void decrypt(char word[], int key)
+{
+  int i = 0;
+  while (word[i] != '\0')
+  {
+    word[i] = (((word[i] - 'a') - key) % ('z' - 'a')) + 'a';
+    i++;
+  }
+}
+
+decrypt(char*, int):
+        X1
+        beq     a5,zero,.L1
+        li      a4,25
+.L3:
+        addiw   a5,a5,-97
+        X2
+        remw    a5,a5,a4
+        addi    a0,a0,1
+        addiw   a5,a5,97
+        sb      a5,-1(a0)
+        X3
+        bne     a5,zero,.L3
+.L1:
+        ret
+
+
+
+        X1
+        lbu     a5,0(a0)
+        X2
+        subw    a5,a5,a1
+        X3
+        lbu     a5,0(a0)
+
+18###########################
+int strlen (char *s){
+  int n = 0;
+  while (s[n] != '\0')
+    n++;
+  return n;
+}
+
+void reverse(char s[])
+{
+  int n = strlen(s);
+  for (int i = 0; i < n; i++)
+    s[n - 1 - i] = s[i];
+}
+
+strlen(char*):
+        lbu     a5,0(a0)
+        beq     a5,zero,.L3
+        addi    sp,sp,-16
+        addi    a0,a0,1
+        sd      ra,8(sp)
+        call    strlen
+        ld      ra,8(sp)
+        addiw   a0,a0,1
+        addi    sp,sp,16
+        jr      ra
+.L3:
+        li      a0,0
+        ret
+reverse(char*):
+        lbu     a5,0(a0)
+        beq     a5,zero,.L17
+        X1
+        mv      s0,a0
+        addi    a0,a0,1
+        sd      ra,8(sp)
+        call    strlen
+        X2
+        mv      a5,s0
+.L11:
+        lbu     a2,0(a5)
+        addi    a5,a5,1
+        subw    a4,a5,s0
+        sb      a2,0(a3)
+        addiw   a4,a4,-1
+        X3
+        ld      ra,8(sp)
+        ld      s0,0(sp)
+        addi    sp,sp,16
+        jr      ra
+.L17:
+        ret
+
+
+
+
+        X1
+        addi    sp,sp,-16
+        sd      s0,0(sp)
+        X2
+        sext.w  a0,a0
+        add     a3,s0,a0
+        X3
+        addi    a3,a3,-1
+        blt     a4,a0,.L11

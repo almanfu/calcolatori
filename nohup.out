@@ -1,0 +1,23 @@
+>>> Launching Test sequence
+[INFO] System call CpuConsolePutString @ 0x1f0008
+[OUTPUT] test
+>>> Instruction @ 0x1020 skipped
+>>> Emulation done. Below is the CPU context
+>>> R0 = 0x1004
+>>> R1 = 0x1f0008
+>>> R2 = 0x0
+>>> R3 = 0x0
+>>> R4 = 0x0
+>>> R5 = 0x0
+>>> R6 = 0x0
+>>> R7 = 0x0
+>>> R8 = 0x0
+>>> R9 = 0x0
+>>> R10 = 0x0
+>>> R11 = 0x0
+>>> R12 = 0x0
+>>> R13 = 0x1f0000
+>>> R14 = 0x1018
+>>> R15 = 0x1024
+>>> Processor Flags : nzcv
+{70055=RamChunk [startingAddress=0x1effeb, bytes=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 30, -1, 47, -31, 30, -1, 47, -31]], 70057=RamChunk [startingAddress=0x1f0025, bytes=[-1, 47, -31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], 70056=RamChunk [startingAddress=0x1f0008, bytes=[30, -1, 47, -31, 30, -1, 47, -31, 30, -1, 47, -31, 30, -1, 47, -31, 30, -1, 47, -31, 30, -1, 47, -31, 30, -1, 47, -31, 30]], 141=RamChunk [startingAddress=0xff9, bytes=[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -22, 116, 101, 115, 116, 0, 0, 0, -96, 4, 0, -97, -27, 4, 16, -97, -27, 49, -1]], 142=RamChunk [startingAddress=0x1016, bytes=[47, -31, 4, 16, 0, 0, 8, 0, 31, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]}

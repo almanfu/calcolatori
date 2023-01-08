@@ -1,0 +1,309 @@
+/*1.HOPING*/
+
+
+typedef long int int64;
+typedef unsigned long int uint64;
+
+void fun(int64 *u, int64 *v, int64 *z, uint64 size){
+  for(uint64 i=0; i < size; i++){
+    
+    u[i] = -u[i];
+    v[i] = -v[i];
+
+    int64 a = u[i]-v[size-i];
+    int64 b = u[size-i]-v[i];
+    
+    if(a>b)
+      z[i] = -a*a*2;
+    else
+      z[i] = b*b*2;
+
+  }
+}
+
+
+fun(long*, long*, long*, unsigned long):
+        X1
+        slli    a3,a3,3
+        add     a7,a0,a3
+        mv      t4,a7
+        add     a3,a1,a3
+        j       .L6
+.L8:
+        X2
+        addi    a1,a1,8
+        addi    a3,a3,-8
+        addi    a7,a7,-8
+        addi    a2,a2,8
+        slli    a4,a4,1
+        sd      a4,-8(a2)
+        beq     a0,t4,.L1
+.L6:
+        ld      a5,0(a0)
+        sub     a5,zero,a5
+        sd      a5,0(a0)
+        ld      a5,0(a1)
+        sub     a4,zero,a5
+        sd      a4,0(a1)
+        ld      a4,0(a0)
+        ld      t1,0(a3)
+        ld      t3,0(a7)
+        sub     a6,t1,a4
+        add     a5,a5,t3
+        X3
+        mul     a5,a5,a5
+        addi    a0,a0,8
+        addi    a1,a1,8
+        addi    a3,a3,-8
+        addi    a7,a7,-8
+        addi    a2,a2,8
+        slli    a5,a5,1
+        sd      a5,-8(a2)
+        bne     a0,t4,.L6
+.L1:
+        ret
+
+
+
+
+
+        X1
+        beqz    a3,.L1
+        X2
+        mul     a4,a6,a4
+        addi    a0,a0,8
+        X3
+        sub     a4,a4,t1
+        bgt     a4,a5,.L8
+
+/*2.DIFFERENT*/
+
+
+typedef long int int64;
+typedef unsigned long int uint64;
+
+void fun(int64 *u, int64 *v, int64 *z, uint64 size){
+  for(uint64 i=0; i < size; i++){
+    
+    u[i] = -u[i];
+    v[i] = -v[i];
+
+    int64 a = v[i]-v[size-i];
+    int64 b = u[size-i]-u[i];
+    
+    if(a>b)
+      z[i] = -a*a*2;
+    else
+      z[i] = b*b*2;
+
+  }
+}
+
+
+fun(long*, long*, long*, unsigned long):
+        X1
+        slli    a3,a3,3
+        add     a7,a0,a3
+        add     a6,a1,a3
+        mv      t4,a7
+        j       .L6
+.L8:
+
+        addi    a1,a1,8
+        addi    a6,a6,-8
+        addi    a7,a7,-8
+        addi    a2,a2,8
+        slli    a4,a4,1
+        sd      a4,-8(a2)
+        beq     a0,t4,.L1
+.L6:
+        ld      a5,0(a0)
+        sub     a5,zero,a5
+        sd      a5,0(a0)
+        ld      a4,0(a1)
+        sub     a3,zero,a4
+        sd      a3,0(a1)
+        ld      t1,0(a6)
+        ld      a5,0(a7)
+        ld      t3,0(a0)
+        sub     a3,a3,t1
+        add     a4,a4,t1
+        X3
+        mul     a5,a5,a5
+        addi    a0,a0,8
+        addi    a1,a1,8
+        addi    a6,a6,-8
+        addi    a7,a7,-8
+        addi    a2,a2,8
+        slli    a5,a5,1
+        sd      a5,-8(a2)
+        bne     a0,t4,.L6
+.L1:
+        ret
+
+
+
+
+
+        X1
+        beqz    a3,.L1
+        X2
+        mul     a4,a4,a3
+        addi    a0,a0,8
+        X3
+        sub     a5,a5,t3
+        bgt     a3,a5,.L8
+
+/*3.ALSO DIFFERENT*/
+
+
+typedef long int int64;
+typedef unsigned long int uint64;
+
+void fun(int64 *u, int64 *v, int64 *z, uint64 size){
+  for(uint64 i=0; i < size; i++){
+    
+    u[i] = -u[i];
+    v[i] = -v[i];
+
+    int64 a = u[i]-v[size-i];
+    int64 b = u[size-i]-v[i];
+    
+    if(a>b)
+      z[i] = -b*b;
+    else
+      z[i] = a*a*2;
+
+  }
+}
+
+
+fun(long*, long*, long*, unsigned long):
+        X1
+        slli    a3,a3,3
+        add     a7,a0,a3
+        add     a6,a1,a3
+        mv      t4,a7
+        j       .L6
+.L8:
+        X2
+        addi    a1,a1,8
+        addi    a6,a6,-8
+        addi    a7,a7,-8
+        addi    a2,a2,8
+        sd      a4,-8(a2)
+        beq     a0,t4,.L1
+.L6:
+        ld      a5,0(a0)
+        sub     a5,zero,a5
+        sd      a5,0(a0)
+        ld      a3,0(a1)
+        sub     a4,zero,a3
+        sd      a4,0(a1)
+        ld      t1,0(a7)
+        ld      a5,0(a0)
+        ld      t3,0(a6)
+        add     a3,a3,t1
+        sub     a4,a4,t1
+        sub     a5,a5,t3
+        X3
+        addi    a0,a0,8
+        addi    a1,a1,8
+        addi    a6,a6,-8
+        addi    a7,a7,-8
+        addi    a2,a2,8
+        slli    a5,a5,1
+        sd      a5,-8(a2)
+        bne     a0,t4,.L6
+.L1:
+        ret
+
+
+
+
+
+        X1
+        beqz    a3,.L1
+        X2
+        mul     a4,a4,a3
+        addi    a0,a0,8
+        X3
+        bgt     a5,a3,.L8
+        mul     a5,a5,a5
+
+/*4.VERY DIFFERENT*/
+
+
+typedef long int int64;
+typedef unsigned long int uint64;
+
+void fun(int64 *u, int64 *v, int64 *z, uint64 size){
+  for(uint64 i=0; i < size; i++){
+    
+    u[i] = -u[i];
+    v[i] = -v[i];
+
+    int64 a = u[i]-v[size-i];
+    int64 b = u[size-i]-v[i];
+    
+    if(a>b)
+      z[i] = -b*b;
+    else
+      z[i] = a*a*2;
+
+  }
+}
+
+
+fun(long*, long*, long*, unsigned long):
+        X1
+        slli    a3,a3,3
+        add     a7,a0,a3
+        add     a6,a1,a3
+        mv      t4,a7
+        j       .L6
+.L8:
+        X2
+        addi    a6,a6,-8
+        addi    a7,a7,-8
+        addi    a2,a2,8
+        sd      a4,-8(a2)
+        beq     a0,t4,.L1
+.L6:
+        ld      a5,0(a0)
+        sub     a5,zero,a5
+        sd      a5,0(a0)
+        ld      a3,0(a1)
+        sub     a4,zero,a3
+        sd      a4,0(a1)
+        ld      t1,0(a7)
+        ld      a5,0(a0)
+        ld      t3,0(a6)
+        add     a3,a3,t1
+        sub     a4,a4,t1
+        sub     a5,a5,t3
+        X3
+        addi    a1,a1,8
+        addi    a6,a6,-8
+        addi    a7,a7,-8
+        addi    a2,a2,8
+        slli    a5,a5,1
+        sd      a5,-8(a2)
+        bne     a0,t4,.L6
+.L1:
+        ret
+
+
+
+
+
+        X1
+        beqz    a3,.L1
+        X2
+        mul     a4,a4,a3
+        addi    a0,a0,8
+        addi    a1,a1,8
+        X3
+        bgt     a5,a3,.L8
+        mul     a5,a5,a5
+        addi    a0,a0,8

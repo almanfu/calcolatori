@@ -1,0 +1,1009 @@
+  /*1################################*/
+
+typedef long int INT32;
+typedef unsigned long int UINT32;
+
+void SumV(INT32 *u, INT32 *z, INT32 *v, UINT32 size){
+    INT32 *ue = u+size-1, *ve = v+size-1;
+    INT32 t1, t2;
+    for (UINT32 i=0; i < size; i++) {
+        t1 = (*u++)*(*v++)-(*ue--)*(*ve--);
+        t2 = 2*t1*t1;
+        if(t1 < 0) t2 *= -1;
+        *z++ = t2;
+    }
+}
+
+SumV(long*, long*, long*, unsigned long):
+        push    {r4, r5, r6, r7, lr}
+        add     r5, r3, #1073741824
+        subs    r5, r5, #1
+        lsls    r5, r5, #2
+        adds    r6, r0, r5
+        X1
+        mov     lr, #0
+.L4:
+        ldr     r4, [r0], #4
+        ldr     r7, [r2], #4
+        mul     ip, r7, r4
+        ldr     r4, [r6], #-4
+        X2
+        mul     r4, ip, ip
+        lsls    r4, r4, #1
+        cmp     ip, #0
+        it      lt
+        rsblt   r4, r4, #0
+        X3
+        cmp     r3, lr
+        bne     .L4
+.L1:
+        pop     {r4, r5, r6, r7, pc}
+
+
+
+        X1
+        add     r5, r5, r2
+        cbz     r3, .L1
+        X2
+        ldr     r7, [r5], #-4
+        mls     ip, r7, r4, ip
+        X3
+        str     r4, [r1], #4
+        add     lr, lr, #1
+
+  /*2################################*/
+
+void f(int * u, int * v, int * z, unsigned int size) {
+  for (int i = 0; i < size; i++) {
+    if (*v > *u) {
+      *(z++) = *(v++) - *(u++);
+      }
+    }
+  }
+  
+f(int*, int*, int*, unsigned int):
+        cbz     r3, .L10
+        mov     ip, #0
+        push    {r4, r5, r6, lr}
+.L4:
+        ldr     r5, [r1]
+        X1
+        add     ip, ip, #1
+        subs    r6, r5, r4
+        cmp     r5, r4
+        ble     .L3
+        str     r6, [lr], #4
+        X2
+        mov     r2, lr
+.L3:
+        cmp     ip, r3
+        X3
+        pop     {r4, r5, r6, pc}
+.L10:
+        bx      lr
+
+
+
+        X1
+        ldr     r4, [r0]
+        mov     lr, r2
+        X2
+        adds    r1, r1, #4
+        adds    r0, r0, #4
+        X3
+        bne     .L4
+
+  /*3################################*/
+
+void copia_stringa(char d[], const char s[]) {
+  unsigned char i = 0;
+  while ((d[i] = s[i]) != 0) {
+    i += 1;
+  }
+}
+
+copia_stringa(char*, char const*):
+        ldrb    r3, [r1]        @ zero_extendqisi2
+        X1
+        movs    r3, #0
+.L3:
+        adds    r3, r3, #1
+        X2
+        ldrb    r2, [r1, r3]    @ zero_extendqisi2
+        strb    r2, [r0, r3]
+        X3
+.L1:
+        bx      lr
+
+
+
+        X1
+        strb    r3, [r0]
+        cbz     r3, .L1
+        X2
+        uxtb    r3, r3
+        X3
+        cmp     r2, #0
+        bne     .L3
+
+  /*4################################*/
+
+bool is_prime(int n)
+{
+  for (int i = 2; i <= n / 2; i++)
+  {
+    if ((n % i) == 0)
+      return false;
+  }
+  return n > 1;
+}
+
+is_prime(int):
+        push    {r4, lr}
+        add     r4, r0, r0, lsr #31
+        X1
+        movs    r1, #2
+.L2:
+        cmp     r4, r1
+        bge     .L4
+        cmp     r2, #1
+        X2
+        movle   r0, #0
+        it      gt
+        movgt   r0, #1
+.L3:
+        pop     {r4, pc}
+.L4:
+        sdiv    r3, r2, r1
+        mls     r0, r1, r3, r2
+        X3
+        adds    r1, r1, #1
+        b       .L2
+
+
+        X1
+        mov     r2, r0
+        asrs    r4, r4, #1
+        X2
+        it      le
+        X3
+        cmp     r0, #0
+        beq     .L3
+
+  /*5################################*/
+
+bool is_prime_rec(int n, int i = 2)
+{
+  if (i > n / 2)
+    return n > 1;
+  else if (n % i == 0)
+    return false;
+  else
+    return is_prime_rec(n, i + 1);
+}
+
+is_prime_rec(int, int):
+        push    {r3, lr}
+        add     r3, r0, r0, lsr #31
+        X1
+        bgt     .L6
+        sdiv    r3, r0, r1
+        X2
+        movs    r0, #0
+        b       .L3
+.L6:
+        cmp     r0, #1
+        it      le
+        X3
+        movgt   r0, #1
+.L3:
+        pop     {r3, pc}
+.L7:
+        adds    r1, r1, #1
+        bl      is_prime_rec(int, int)
+        b       .L3
+
+
+
+        X1
+        cmp     r1, r3, asr #1
+        X2
+        mls     r3, r1, r3, r0
+        cbnz    r3, .L7
+        X3
+        movle   r0, #0
+        it      gt        
+
+  /*6################################*/
+
+void lambda_swap(unsigned int &a, unsigned int &b)
+{
+  // Swap 8 lsb of two numbers
+  unsigned int a_ = a, b_ = b;
+  unsigned int a_res, b_res;
+  const unsigned int shift = (sizeof(int) - 1) * 8;
+
+  a_ = (a_ >> 8) << 8;         // lsb set to 0
+  b_ = (b_ << shift) >> shift; // all bytes but the lsb set to 0
+
+  a_res = a_ | b_;
+
+  a_ = a;
+  b_ = b;
+
+  a_ = (a_ << shift) >> shift; // all bytes but the lsb set to 0
+  b_ = (b_ >> 8) << 8;         // lsb set to 0
+
+  b_res = a_ | b_;
+
+  a = a_res;
+  b = b_res;
+}
+
+lambda_swap(unsigned int&, unsigned int&):
+        ldr     r2, [r0]
+        X1
+        mov     r4, r2
+        bfi     r4, r3, #0, #8
+        bfi     r3, r2, #0, #8
+        X2
+        ldr     r4, [sp], #4
+        X3
+        bx      lr
+
+
+
+        X1
+        ldr     r3, [r1]
+        push    {r4}
+        X2
+        str     r4, [r0]
+        X3
+        str     r3, [r1]        
+
+  /*7################################*/
+
+int division(int a, int b, int &remainder)
+{ // a>=0, b>0
+  int quotient = 0;
+  while (a >= b)
+  {
+    a -= b;
+    quotient++;
+  }
+  remainder = a;
+  return quotient;
+}
+
+division(int, int, int&):
+        mov     r3, r0
+        X1
+        blt     .L2
+.L3:
+        subs    r3, r3, r1
+        adds    r0, r0, #1
+        X2
+        ble     .L3
+.L2:
+        X3
+        bx      lr
+
+
+
+        X1
+        movs    r0, #0
+        cmp     r3, r1
+        X2
+        cmp     r1, r3
+        X3
+        str     r3, [r2]        
+
+  /*8################################*/
+
+int gcd(int a, int b)
+{ // Euclidean Algorithm
+  // a > b
+  if (b == 0)
+    return a;
+  else
+    return gcd(b, a % b);
+}
+
+gcd(int, int):
+        mov     r2, r0
+        X1
+        b       .L10
+.L11:
+        mov     r0, r3
+.L2:
+        sdiv    r3, r2, r0
+        X2
+        cmp     r3, #0
+        bne     .L11
+        bx      lr
+.L10:
+        X3
+        bx      lr
+
+
+
+        X1
+        mov     r0, r1
+        cbnz    r1, .L2
+        X2
+        mls     r3, r0, r3, r2
+        mov     r2, r0
+        X3
+        mov     r0, r2
+
+  /*9################################*/
+
+int fib(int n){// n >= 0
+  if(n == 0 || n == 1)
+    return 1;
+  else
+    return fib(n-1)+fib(n-2);
+}
+
+fib(int):
+        cmp     r0, #1
+        bls     .L3
+        X1
+        subs    r0, r0, #1
+        bl      fib(int)
+        mov     r5, r0
+        X2
+        add     r0, r0, r5
+        pop     {r3, r4, r5, pc}
+.L3:
+        X3
+        bx      lr
+
+
+
+        X1
+        push    {r3, r4, r5, lr}
+        mov     r4, r0
+        X2
+        subs    r0, r4, #2
+        bl      fib(int)
+        X3
+        movs    r0, #1        
+
+  /*10###############################*/
+
+int fact(int n){// n >= 0
+  if(n == 0 || n == 1)
+    return 1;
+  else
+    return n*fact(n-1);
+}
+
+fact(int):
+        mov     r3, r0
+        X1
+        bls     .L10
+.L2:
+        mov     r2, r3
+        X2
+        cmp     r3, #1
+        X3
+        bx      lr
+.L10:
+        bx      lr
+
+
+
+        X1
+        movs    r0, #1
+        cmp     r3, #1
+        X2
+        subs    r3, r3, #1
+        X3
+        mul     r0, r2, r0
+        bne     .L2
+
+  /*11###############################*/
+
+bool is_alnum(char c)
+{
+  return ('a' <= c && c <= 'z') ||
+         ('A' <= c && c <= 'Z') ||
+         ('0' <= c && c <= '9');
+}
+
+is_alnum(char):
+        bic     r3, r0, #32
+        X1
+        bls     .L3
+        subs    r0, r0, #48
+        cmp     r0, #9
+        X2
+        movhi   r0, #0
+        X3
+        bx      lr
+.L3:
+        movs    r0, #1
+        bx      lr
+
+
+
+        X1
+        subs    r3, r3, #65
+        cmp     r3, #25
+        X2
+        it      hi
+        X3
+        it      ls
+        movls   r0, #1        
+
+  /*12###############################*/
+
+void crypt(char word[], int key)
+{
+  int i = 0;
+  while (word[i] != '\0')
+  {
+    word[i] = (((word[i] - 'a') + key) % ('z' - 'a')) + 'a';
+    i++;
+  }
+}
+
+crypt(char*, int):
+        subs    r0, r0, #1
+        X1
+        push    {r4, lr}
+.L2:
+        X2
+        pop     {r4, pc}
+.L3:
+        subs    r3, r3, #97
+        add     r3, r3, r1
+        X3
+        adds    r3, r3, #97
+        strb    r3, [r0]
+        b       .L2
+
+
+
+        X1
+        movs    r2, #25
+        X2
+        ldrb    r3, [r0, #1]!   @ zero_extendqisi2
+        cbnz    r3, .L3
+        X3
+        sdiv    r4, r3, r2
+        mls     r3, r2, r4, r3        
+
+  /*13###############################*/
+
+void decrypt(char word[], int key)
+{
+  int i = 0;
+  while (word[i] != '\0')
+  {
+    word[i] = (((word[i] - 'a') - key) % ('z' - 'a')) + 'a';
+    i++;
+  }
+}
+
+decrypt(char*, int):
+        subs    r0, r0, #1
+        X1
+.L2:
+        ldrb    r3, [r0, #1]!   @ zero_extendqisi2
+        cbnz    r3, .L3
+        pop     {r4, pc}
+.L3:
+        X2
+        sdiv    r4, r3, r2
+        mls     r3, r2, r4, r3
+        adds    r3, r3, #97
+        X3
+        b       .L2
+
+
+
+        X1
+        movs    r2, #25
+        push    {r4, lr}
+        X2
+        subs    r3, r3, #97
+        subs    r3, r3, r1
+        X3
+        strb    r3, [r0]        
+
+  /*14###############################*/
+int strlen (char *s){
+  int n = 0;
+  while (s[n] != '\0')
+    n++;
+  return n;
+}
+
+void leftmirror(char s[])
+{
+  int n = strlen(s);
+  for (int i = 0; i < n; i++)
+    s[n - 1 - i] = s[i];
+}
+
+strlen(char*):
+        push    {r3, lr}
+        ldrb    r3, [r0]        @ zero_extendqisi2
+        cbz     r3, .L3
+        adds    r0, r0, #1
+        bl      strlen
+        adds    r0, r0, #1
+        pop     {r3, pc}
+.L3:
+        mov     r0, r3
+        pop     {r3, pc}
+leftmirror(char*):
+        ldrb    r3, [r0]        @ zero_extendqisi2
+        cbz     r3, .L14
+        X1
+        adds    r0, r0, #1
+        bl      strlen
+        adds    r2, r0, #1
+        X2
+        add     r2, r2, r4
+.L8:
+        ldrb    r3, [r1, #1]!   @ zero_extendqisi2
+        strb    r3, [r2, #-1]!
+        subs    r3, r4, r2
+        X3
+        blt     .L8
+        pop     {r4, pc}
+.L14:
+        bx      lr
+
+
+
+        X1
+        push    {r4, lr}
+        mov     r4, r0
+        X2
+        subs    r1, r4, #1
+        X3
+        add     r3, r3, r0
+        cmp     r3, r0
+
+  /*14.1#############################*/
+
+void reverse(char s[])
+{
+  char* se = s;
+  while(*se++ != 0) ;
+  se -= 2;
+  while (s != se && s != (se+1)){
+    char t = *se;
+    *se-- = *s;
+    *s++ = t;
+  }
+}
+
+reverse(char*):
+        mov     r2, r0
+.L2:
+        mov     r3, r2
+        ldrb    r1, [r2], #1    @ zero_extendqisi2
+        X1
+        cmp     r0, r2
+        bne     .L7
+        b       .L1
+.L9:
+        ldrb    ip, [r0]        @ zero_extendqisi2
+        mov     r2, r3
+        ldrb    r1, [r3, #-1]!  @ zero_extendqisi2
+        X2
+        cmp     r0, r2
+        beq     .L1
+.L7:
+        cmp     r3, r0
+        bne     .L9
+.L1:
+        bx      lr
+
+
+
+        X1
+        cmp     r1, #0
+        bne     .L2
+        subs    r2, r3, #1
+        X2
+        subs    r2, r2, #2
+        strb    ip, [r3]
+        strb    r1, [r0], #1
+
+  /*15###############################*/
+
+int mathforfun(int i, int j,
+  int q, int s){
+  for(i=0;i<q; i++){
+    q=q+s;
+    q=q-j;
+  }
+return q;
+}
+
+mathforfun(int, int, int, int):
+        subs    r0, r2, #0
+        X1
+        movs    r2, #0
+        X2
+.L3:
+        add     r0, r0, r3
+        X3
+        cmp     r0, r2
+        bgt     .L3
+.L2:
+        bx      lr
+
+
+
+        X1
+        ble     .L2
+        X2
+        subs    r3, r3, r1
+        X3
+        adds    r2, r2, #1
+
+  /*16###############################*/
+
+void sumV(int* v, int* w, int* z, int size){
+  while(size-- != 0){
+    *z++ = *v++ + *w++;
+  }
+}
+
+sumV(int*, int*, int*, int):
+        cbz     r3, .L9
+        X1
+        push    {r4}
+.L3:
+        ldr     r3, [r0], #4
+        X2
+        cmp     ip, #-1
+        add     r3, r3, r4
+        str     r3, [r2], #4
+        X3
+        bx      lr
+.L9:
+        bx      lr
+
+
+
+        X1
+        add     ip, r3, #-1
+        X2
+        ldr     r4, [r1], #4
+        add     ip, ip, #-1
+        X3
+        bne     .L3
+        ldr     r4, [sp], #4
+
+  /*17###############################*/
+
+long myFunc(long a,long b,long c){
+  long result=0;
+  result+=a;
+  result+=b;
+  result+=c;
+  return result;
+}
+
+myFunc(long, long, long):
+        add     r0, r0, r1
+        X1
+        bx      lr
+
+
+
+        X1
+        add     r0, r0, r2
+
+  /*18###############################*/
+
+long sum(long count){
+  if(count>0){
+    long psum=sum(count-1);
+  return psum+count;
+  }else{
+    return 0;
+  }
+}
+
+sum(long):
+        subs    r3, r0, #0
+        X1
+        ble     .L4
+.L3:
+        add     r0, r0, r3
+        X2
+        bne     .L3
+        bx      lr
+.L4:
+        bx      lr
+
+
+
+        X1
+        mov     r0, #0
+        X2
+        subs    r3, r3, #1
+
+  /*19###############################*/
+
+typedef long int INT32;
+INT32 power(INT32 x,INT32 y){
+  INT32 result=1;
+  while(y & y != 0){
+    result *= x;
+    y--;
+  }
+return result;
+}
+
+power(long, long):
+        mov     r2, r0
+        X1
+        moveq   r0, #0
+        andne   r0, r1, #1
+        cbz     r0, .L4
+.L3:
+        subs    r1, r1, #1
+        X2
+        it      eq
+        moveq   r3, #0
+        X3
+        bne     .L3
+        bx      lr
+.L4:
+        movs    r0, #1
+        bx      lr
+
+
+
+        X1
+        cmp     r1, #0
+        ite     eq
+        X2
+        mul     r0, r2, r0
+        and     r3, r1, #1
+        X3
+        cmp     r3, #0
+
+  /*20###############################*/
+
+bool comparestring(const char*s1,
+const char*s2){
+  while((*s1!='\0')&&(*s2!='\0')&&(*s1==*s2)){
+    s1++;
+    s2++;
+  }
+  return(*s1==*s2);
+}
+
+comparestring(char const*, char const*):
+        push    {r4}
+        ldrb    r3, [r0]        @ zero_extendqisi2
+        cbz     r3, .L2
+        mov     r2, r1
+.L3:
+        mov     r1, r2
+        ldrb    ip, [r2], #1    @ zero_extendqisi2
+        cmp     ip, r3
+        X1
+        cmp     ip, #0
+        it      eq
+        moveq   r4, #0
+        cbz     r4, .L2
+        ldrb    r3, [r0, #1]!   @ zero_extendqisi2
+        X2
+        mov     r1, r2
+.L2:
+        ldrb    r0, [r1]        @ zero_extendqisi2
+        cmp     r0, r3
+        X3
+        moveq   r0, #1
+        ldr     r4, [sp], #4
+        bx      lr
+
+
+        X1
+        ite     ne
+        movne   r4, #0
+        moveq   r4, #1
+        X2
+        cmp     r3, #0
+        bne     .L3
+        X3
+        ite     ne
+        movne   r0, #0
+
+  /*21###############################*/
+
+int calcola_media(int A[], int n) {
+  int media = 0;
+  for(int i = 0; i < n; i++) {
+    media = media + A[i];
+  }
+  return media / n;
+}
+
+calcola_media(int*, int):
+        cmp     r1, #0
+        ble     .L4
+        X1
+        add     ip, r0, r1, lsl #2
+.L3:
+        ldr     r2, [r0], #4
+        X2
+        bne     .L3
+        X3
+        bx      lr
+.L4:
+        movs    r0, #0
+        bx      lr
+
+
+
+        X1
+        movs    r3, #0
+        X2
+        add     r3, r3, r2
+        cmp     r0, ip
+        X3
+        sdiv    r0, r3, r1
+
+  /*22###############################*/
+
+int trova_elemento(int A[], int n, int v) {
+  for(int i = 0; i < n; i++) {
+    if (A[i]== v) return i;
+  }
+  return -1;
+}
+
+trova_elemento(int*, int, int):
+        subs    ip, r1, #0
+        ble     .L4
+        X1
+        b       .L3
+.L7:
+        X2
+        cmp     ip, r0
+        beq     .L4
+.L3:
+        X3
+        bne     .L7
+        bx      lr
+.L4:
+        mov     r0, #-1
+        bx      lr
+
+
+
+        X1
+        subs    r3, r0, #4
+        movs    r0, #0
+        X2
+        adds    r0, r0, #1
+        X3
+        ldr     r1, [r3, #4]!
+        cmp     r1, r2
+
+  /*23###############################*/
+
+void hailstone5(){
+  int iter=0;
+  int n=5;
+  while(n != 1){
+    iter++;
+    if(n%2){
+      n = 3 * n+1;
+    }else{
+      n = n/2;
+    }
+  }
+}
+
+hailstone5():
+        movs    r3, #5
+        b       .L5
+.L2:
+        X1
+        cmp     r3, #1
+        beq     .L6
+.L5:
+        tst     r3, #1
+
+        X2        adds    r3, r3, #1
+        b       .L5
+.L6:
+        X3
+
+
+
+        X1
+        add     r3, r3, r3, lsr #31
+        asrs    r3, r3, #1
+        X2
+        beq     .L2
+        add     r3, r3, r3, lsl #1
+        X3
+        bx      lr        
+
+  /*24###############################*/
+
+int memcompare(int nb, char*m1, char*m2){
+  while(nb-->0){
+    if( *m1++ != *m2++){
+      return 0;
+    }
+  }
+  return 1;
+}
+
+memcompare(int, char*, char*):
+        add     r0, r0, r1
+        b       .L2
+.L4:
+        ldrb    ip, [r1], #1    @ zero_extendqisi2
+        X1
+        bne     .L5
+.L2:
+        X2
+        bgt     .L4
+        movs    r0, #1
+        bx      lr
+.L5:
+        X3
+        bx      lr
+
+
+
+        X1
+        ldrb    r3, [r2], #1    @ zero_extendqisi2
+        cmp     ip, r3
+        X2
+        subs    r3, r0, r1
+        cmp     r3, #0
+        X3
+        movs    r0, #0        
+
+  /*25###############################*/
+
+typedef long int INT32;
+INT32 fun(INT32* MemVett){
+  INT32 Ris=0;
+  for(INT32 i=0; i<100; i++)
+    Ris += MemVett[i];
+  return Ris;
+}
+
+fun(long*):
+        X1
+        movs    r0, #0
+.L2:
+        ldr     r2, [r3, #4]!
+        X2
+        bne     .L2
+        bx      lr
+
+
+
+        X1
+        subs    r3, r0, #4
+        add     r1, r0, #396
+        X2
+        add     r0, r0, r2
+        cmp     r3, r1
+
+
+REGEX:
+(/\*.*#+\*/)
+SETTINGS:
+-Os -march=armv8-a
+-O2 -march=armv8-a
